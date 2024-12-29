@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { TextInput, Button, View, Text, TouchableOpacity } from 'react-native';
+import { TextInput, Button, View, Text, TouchableOpacity, Image } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
 
 const QuestionInput = ({ addQuestion }) => {
   const [questionText, setQuestionText] = useState('');
   const [questionType, setQuestionType] = useState('text'); // Default question type is text
   const [gridRows, setGridRows] = useState([]);
   const [checkboxOptions, setCheckboxOptions] = useState([{ option: '', checked: false }]);
+  const [imageUri, setImageUri] = useState(null); // State to store selected image URI
 
   const handleAddQuestion = () => {
     if (questionText.trim()) {
@@ -14,11 +16,15 @@ const QuestionInput = ({ addQuestion }) => {
         text: questionText,
         gridRows,
         checkboxOptions,
+        imageUri, // Include image in the question data
       };
       addQuestion(questionData);
 
       // Reset form
-      
+      setQuestionText('');
+      setGridRows([]);
+      setCheckboxOptions([{ option: '', checked: false }]);
+      setImageUri(null);
     }
   };
 
@@ -54,11 +60,24 @@ const QuestionInput = ({ addQuestion }) => {
         marginRight: 8,
       }}
     >
-      {checked && (
-        <Text style={{ color: '#FFF', fontSize: 16 }}>✓</Text>
-      )}
+      {checked && <Text style={{ color: '#FFF', fontSize: 16 }}>✓</Text>}
     </TouchableOpacity>
   );
+
+  const handleSelectImage = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images], // Restrict to image files
+      });
+      setImageUri(res[0].uri); // Set the URI of the selected image
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User canceled the picker');
+      } else {
+        console.log('Unknown error:', err);
+      }
+    }
+  };
 
   return (
     <View style={{ marginBottom: 12 }}>
@@ -146,6 +165,23 @@ const QuestionInput = ({ addQuestion }) => {
           />
         </View>
       )}
+
+      {/* Image picker section */}
+      <View style={{ marginBottom: 12 }}>
+        <Text style={{ marginBottom: 8 }}>Add Image (Optional):</Text>
+        <Button title="Select Image" onPress={handleSelectImage} />
+        {imageUri && (
+          <View style={{ marginTop: 12, alignItems: 'center' }}>
+            <Image
+              source={{ uri: imageUri }}
+              style={{ width: 100, height: 100, borderRadius: 8 }}
+            />
+            <Text style={{ marginTop: 4, fontSize: 12, color: '#555' }}>
+              Selected Image
+            </Text>
+          </View>
+        )}
+      </View>
 
       <Button title="Add Question" onPress={handleAddQuestion} />
     </View>
