@@ -18,9 +18,7 @@ const QuestionInput = ({ addQuestion }) => {
       addQuestion(questionData);
 
       // Reset form
-      setQuestionText('');
-      setGridRows([]);
-      setCheckboxOptions([{ option: '', checked: false }]);
+      
     }
   };
 

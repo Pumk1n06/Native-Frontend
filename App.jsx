@@ -58,10 +58,11 @@ const App = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/api/forms/create', {
+      const response = await fetch('https://localhost:5000/api/forms/create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          "Accept":"application/json, text/plain, /",
+          'Content-Type': 'multipart/form-data',
         },
         body: JSON.stringify(formData),
       });
@@ -101,7 +102,7 @@ const App = () => {
           <Button
             title="Save Form"
             onPress={handleSaveForm}
-            disabled={formData.questions.length === 0 || !formData.title}
+            
           />
         </View>
 
